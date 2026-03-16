@@ -93,7 +93,7 @@ class DatabaseBackupJob implements ShouldBeEncrypted, ShouldQueue
             }
             if (data_get($this->backup, 'database_type') === ServiceDatabase::class) {
                 $this->database = data_get($this->backup, 'database');
-                $this->server = $this->database->service->server;
+                $this->server = $this->database->getServer();
                 $this->s3 = $this->backup->s3;
             } else {
                 $this->database = data_get($this->backup, 'database');
@@ -121,8 +121,9 @@ class DatabaseBackupJob implements ShouldBeEncrypted, ShouldQueue
             }
             if (data_get($this->backup, 'database_type') === ServiceDatabase::class) {
                 $databaseType = $this->database->databaseType();
-                $serviceUuid = $this->database->service->uuid;
-                $serviceName = str($this->database->service->name)->slug();
+                $owner = $this->database->owner();
+                $serviceUuid = $owner->uuid;
+                $serviceName = str($owner->name)->slug();
                 if (str($databaseType)->contains('postgres')) {
                     $this->container_name = "{$this->database->name}-$serviceUuid";
                     $this->directory_name = $serviceName.'-'.$this->container_name;
@@ -673,8 +674,8 @@ class DatabaseBackupJob implements ShouldBeEncrypted, ShouldQueue
             $bucket = $this->s3->bucket;
             $endpoint = $this->s3->endpoint;
             $this->s3->testConnection(shouldSave: true);
-            if (data_get($this->backup, 'database_type') === ServiceDatabase::class) {
-                $network = $this->database->service->destination->network;
+            if (data_get($this->backup, 'database_type') === \App\Models\ServiceDatabase::class) {
+                $network = $this->database->getNetwork();
             } else {
                 $network = $this->database->destination->network;
             }

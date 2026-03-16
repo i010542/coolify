@@ -404,6 +404,28 @@ function applicationParser(Application $resource, int $pull_request_id = 0, ?int
 
     $parsedServices = collect([]);
 
+    if (! $isPullRequest) {
+        foreach ($services as $serviceName => $service) {
+            $image = data_get_str($service, 'image');
+            $isDatabase = isDatabaseImage($image, $service);
+            if ($isDatabase) {
+                ServiceDatabase::firstOrCreate([
+                    'name' => $serviceName,
+                    'application_id' => $resource->id,
+                ], [
+                    'image' => $image,
+                ]);
+            } else {
+                $existingDb = ServiceDatabase::where('name', $serviceName)
+                    ->where('application_id', $resource->id)
+                    ->first();
+                if ($existingDb) {
+                    $existingDb->delete();
+                }
+            }
+        }
+    }
+
     $allMagicEnvironments = collect([]);
     foreach ($services as $serviceName => $service) {
         // Validate service name for command injection
