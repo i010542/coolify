@@ -42,6 +42,7 @@ use App\Livewire\Security\PrivateKey\Index as SecurityPrivateKeyIndex;
 use App\Livewire\Security\PrivateKey\Show as SecurityPrivateKeyShow;
 use App\Livewire\Server\Advanced as ServerAdvanced;
 use App\Livewire\Server\CaCertificate\Show as CaCertificateShow;
+use App\Livewire\Server\EnvVars as ServerEnvVars;
 use App\Livewire\Server\Charts as ServerCharts;
 use App\Livewire\Server\CloudflareTunnel;
 use App\Livewire\Server\CloudProviderToken\Show as CloudProviderTokenShow;
@@ -289,6 +290,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/proxy/logs', ProxyLogs::class)->name('server.proxy.logs');
         Route::get('/terminal', ExecuteContainerCommand::class)->name('server.command')->middleware('can.access.terminal');
         Route::get('/docker-cleanup', DockerCleanup::class)->name('server.docker-cleanup');
+        Route::get('/env-vars', ServerEnvVars::class)->name('server.env-vars');
         Route::get('/security', fn () => redirect(route('dashboard')))->name('server.security')->middleware('can.update.resource');
         Route::get('/security/patches', Patches::class)->name('server.security.patches')->middleware('can.update.resource');
         Route::get('/security/terminal-access', TerminalAccess::class)->name('server.security.terminal-access')->middleware('can.update.resource');

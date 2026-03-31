@@ -2108,6 +2108,16 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
             $this->coolify_variables .= "COOLIFY_BRANCH={$this->application->git_branch} ";
         }
         $this->coolify_variables .= "COOLIFY_RESOURCE_UUID={$this->application->uuid} ";
+
+        // Inject predefined server environment variables
+        $predefined = $this->server->predefined_env_vars ?? [];
+        foreach ($predefined as $env) {
+            $key = data_get($env, 'key');
+            $value = data_get($env, 'value');
+            if (filled($key) && isset($value)) {
+                $this->coolify_variables .= "{$key}={$value} ";
+            }
+        }
     }
 
     private function check_git_if_build_needed()

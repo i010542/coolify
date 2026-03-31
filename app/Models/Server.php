@@ -233,6 +233,7 @@ class Server extends BaseModel
         'proxy' => SchemalessAttributes::class,
         'traefik_outdated_info' => 'array',
         'server_metadata' => 'array',
+        'predefined_env_vars' => 'array',
         'logdrain_axiom_api_key' => 'encrypted',
         'logdrain_newrelic_license_key' => 'encrypted',
         'delete_unused_volumes' => 'boolean',
@@ -261,6 +262,7 @@ class Server extends BaseModel
         'detected_traefik_version',
         'traefik_outdated_info',
         'server_metadata',
+        'predefined_env_vars',
     ];
 
     protected $guarded = [];
