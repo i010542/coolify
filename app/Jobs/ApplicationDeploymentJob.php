@@ -1242,6 +1242,10 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
                 return 1;
             });
 
+            $this->getServerRuntimeEnvironmentVariables()->each(function (EnvironmentVariable $env) use ($envs) {
+                $envs->push($env->key.'='.$env->real_value);
+            });
+
             foreach ($runtime_environment_variables as $env) {
                 $envs->push($env->key.'='.$env->real_value);
             }
@@ -1308,6 +1312,10 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
                 return 1;
             });
 
+            $this->getServerRuntimeEnvironmentVariables()->each(function (EnvironmentVariable $env) use ($envs) {
+                $envs->push($env->key.'='.$env->real_value);
+            });
+
             foreach ($runtime_environment_variables_preview as $env) {
                 $envs->push($env->key.'='.$env->real_value);
             }
@@ -1325,6 +1333,16 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
 
         // Return the generated environment variables instead of storing them globally
         return $envs;
+    }
+
+    private function getServerRuntimeEnvironmentVariables(): Collection
+    {
+        return $this->server->environment_variables()
+            ->where('is_runtime', true)
+            ->where('key', 'not like', 'NIXPACKS_%')
+            ->get()
+            ->sortBy('key')
+            ->values();
     }
 
     private function save_runtime_environment_variables()

@@ -41,6 +41,8 @@
                             helper="Maximum number of queued deployments allowed. New deployments will be rejected with a 429 status when the limit is reached." />
                     </div>
                 </div>
+
+                <livewire:project.shared.environment-variable.all :resource="$server" />
             </div>
         </form>
     </div>

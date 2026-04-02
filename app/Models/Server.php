@@ -911,6 +911,13 @@ $schema://$host {
         return $this->hasMany(Service::class);
     }
 
+    public function environment_variables()
+    {
+        return $this->morphMany(EnvironmentVariable::class, 'resourceable')
+            ->where('is_preview', false)
+            ->orderBy('key');
+    }
+
     public function port(): Attribute
     {
         return Attribute::make(
